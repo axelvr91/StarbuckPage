@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-export default function Navbar() {
+export default function Navbar({ onNavigate, currentPage }: { onNavigate: (page: 'home' | 'menu') => void, currentPage: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -20,9 +20,9 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Menu', href: '#' },
-    { name: 'Rewards', href: '#' },
-    { name: 'Gift Cards', href: '#' },
+    { name: 'Menu', id: 'menu' as const },
+    { name: 'Rewards', id: 'rewards' as const },
+    { name: 'Gift Cards', id: 'gift' as const },
   ];
 
   return (
@@ -36,7 +36,7 @@ export default function Navbar() {
           <div className="flex justify-between items-center">
             {/* Left: Logo */}
             <div className="flex items-center gap-8">
-              <a href="/" className="flex items-center gap-2 group">
+              <button onClick={() => onNavigate('home')} className="flex items-center gap-2 group">
                 <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white overflow-hidden">
                   <svg viewBox="0 0 100 100" className="w-8 h-8 fill-current">
                     <path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm0 92.5C26.6 92.5 7.5 73.4 7.5 50S26.6 7.5 50 7.5 92.5 26.6 92.5 50 73.4 92.5 50 92.5z"/>
@@ -44,18 +44,20 @@ export default function Navbar() {
                   </svg>
                 </div>
                 <span className="text-primary-dark font-bold text-xl tracking-tight uppercase hidden sm:block">Starbucks</span>
-              </a>
+              </button>
 
               {/* Desktop Nav Links */}
               <div className="hidden md:flex items-center gap-6">
                 {navLinks.map((link) => (
-                  <a 
-                    key={link.name} 
-                    href={link.href}
-                    className="text-sm font-bold uppercase tracking-widest text-text-primary hover:text-primary transition-colors"
+                  <button 
+                    key={link.id} 
+                    onClick={() => link.id === 'menu' && onNavigate('menu')}
+                    className={`text-sm font-bold uppercase tracking-widest transition-colors ${
+                      currentPage === link.id ? 'text-primary' : 'text-text-primary hover:text-primary'
+                    }`}
                   >
                     {link.name}
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
@@ -81,7 +83,10 @@ export default function Navbar() {
                 <ShoppingCart className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-[10px] flex items-center justify-center rounded-full">0</span>
               </button>
-              <button className="hidden sm:block bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-button font-bold text-sm transition-all shadow-md active:scale-95">
+              <button 
+                onClick={() => onNavigate('menu')}
+                className="hidden sm:block bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-button font-bold text-sm transition-all shadow-md active:scale-95"
+              >
                 Order Now
               </button>
               
@@ -124,18 +129,29 @@ export default function Navbar() {
 
               <div className="flex flex-col gap-6">
                 {navLinks.map((link) => (
-                  <a 
-                    key={link.name} 
-                    href={link.href}
-                    className="text-2xl font-bold text-text-primary hover:text-primary transition-colors"
+                  <button 
+                    key={link.id} 
+                    onClick={() => {
+                      if (link.id === 'menu') onNavigate('menu');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`text-2xl font-bold text-left transition-colors ${
+                      currentPage === link.id ? 'text-primary' : 'text-text-primary hover:text-primary'
+                    }`}
                   >
                     {link.name}
-                  </a>
+                  </button>
                 ))}
               </div>
 
               <div className="mt-auto pt-10 border-t border-surface flex flex-col gap-4">
-                <button className="w-full bg-primary text-white py-4 rounded-button font-bold text-lg shadow-lg">
+                <button 
+                  onClick={() => {
+                    onNavigate('menu');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full bg-primary text-white py-4 rounded-button font-bold text-lg shadow-lg"
+                >
                   Order Now
                 </button>
                 <div className="flex justify-center gap-6 text-text-secondary">
