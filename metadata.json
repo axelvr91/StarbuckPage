@@ -1,0 +1,5 @@
+{
+  "name": "Starbucks Master AI Build",
+  "description": "A high-converting Starbucks website clone with AI features and premium design.",
+  "requestFramePermissions": ["geolocation"]
+}
